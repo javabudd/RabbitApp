@@ -1,5 +1,11 @@
 {
   "require": {
+    "corneltek/cliframework": "*",
     "videlalvaro/php-amqplib": "v2.1.0"
+  },
+  "autoload": {
+    "psr-0": {
+      "RabbitApp": "src/"
+    }
   }
 }
