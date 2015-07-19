@@ -11,12 +11,16 @@ class RabbitCli extends Application
         $this->command('list', '\RabbitApp\Command\ListCommand');
 
         // Commands/Publishers
-        $this->command('benchmark', '\RabbitApp\Command\BenchmarkCommand');
-        $this->command('render-pdf', 'RabbitApp\Command\RenderPdfCommand');
+        $this->commandGroup('Publishers', [
+            'benchmark'  => '\RabbitApp\Command\BenchmarkCommand',
+            'render-pdf' =>  'RabbitApp\Command\RenderPdfCommand'
+        ]);
 
         // Workers
-        $this->command('benchmark-worker', 'RabbitApp\Command\BenchmarkWorkerCommand');
-        $this->command('render-pdf-worker', 'RabbitApp\Command\RenderPdfWorkerCommand');
+        $this->commandGroup('Workers', [
+            'benchmark-worker'  => 'RabbitApp\Command\BenchmarkWorkerCommand',
+            'render-pdf-worker' => 'RabbitApp\Command\RenderPdfWorkerCommand'
+        ]);
     }
 
     /**
