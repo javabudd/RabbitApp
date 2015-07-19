@@ -2,41 +2,42 @@
 
 namespace RabbitApp\Worker;
 
-use RabbitApp\Connection\Instance;
-use PhpAmqpLib\Channel\AMQPChannel;
-use RabbitApp\Connection\Channel;
+use RabbitApp\Connection\Factory\ChannelFactory;
 
 class BenchmarkWorker implements WorkerInterface
 {
-    /** @var Instance */
-    protected $connection_instance;
+    /** @var ChannelFactory */
+    protected $channel_factory;
 
     /**
-     * @param Instance $connection_instance
+     * @param ChannelFactory $channel_factory
+     * @throws \Exception
      */
-    public function __construct(Instance $connection_instance)
+    public function __construct(ChannelFactory $channel_factory)
     {
-        $this->connection_instance = $connection_instance;
+        $this->channel = $channel_factory->getChannelByClassName(self::class);
     }
 
     /**
      * @TODO Threading
+     *
+     * @throws \Exception
      */
     public function run()
     {
-        $channel = $this->getChannel();
-        $this->consume($channel);
-        while (count($channel->callbacks)) {
-            $channel->wait();
+        $consumer_tag = $this->consume();
+        echo 'Worker Tag: ' . $consumer_tag . PHP_EOL;
+        while (count($this->channel->callbacks)) {
+            $this->channel->wait();
         }
     }
 
     /**
-     * @param AMQPChannel $channel
+     * @return mixed|string
      */
-    public function consume(AMQPChannel $channel)
+    public function consume()
     {
-        $channel->basic_consume('exec_queue', '', false, true, false, false, $this->callback());
+        return $this->channel->basic_consume('exec_queue', '', false, true, false, false, $this->callback());
     }
 
     /**
@@ -49,15 +50,8 @@ class BenchmarkWorker implements WorkerInterface
         /** @var \PhpAmqpLib\Message\AMQPMessage $args */
         return function($args) {
             exec($args->body);
-            echo($args->get('message_id') . PHP_EOL . 'Job finished!' . PHP_EOL);
+            echo(date('Y/m/d H:i:s') . ": Job #{$args->get('message_id')} finished!" . PHP_EOL);
         };
     }
 
-    /**
-     * @return AMQPChannel
-     */
-    public function getChannel()
-    {
-        return $this->connection_instance->channel(Channel::$channels[self::class]);
-    }
 }

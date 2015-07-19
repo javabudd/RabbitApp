@@ -5,7 +5,7 @@ namespace RabbitApp\Connection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 
-class Instance extends AMQPStreamConnection
+class InstanceConnection extends AMQPStreamConnection
 {
     /**
      * @throws \Exception

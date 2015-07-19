@@ -3,7 +3,9 @@
 namespace RabbitApp;
 
 use Pimple\Container;
-use RabbitApp\Connection\Instance;
+use RabbitApp\Connection\Factory\ChannelFactory;
+use RabbitApp\Connection\InstanceConnection;
+use RabbitApp\Message\RabbitMessage;
 use RabbitApp\Publisher\BenchmarkPublisher;
 use RabbitApp\Worker\BenchmarkWorker;
 
@@ -16,19 +18,32 @@ class RabbitDi
     {
         $container = new Container();
 
-        // Connection
-        $container[Instance::class] = function() {
-            return new Instance();
+        // Connections
+        $container[InstanceConnection::class] = function() {
+            return new InstanceConnection();
+        };
+        $container[ChannelFactory::class] = function($c) {
+            return new ChannelFactory($c[InstanceConnection::class]);
         };
 
-        // Workers
-        $container[BenchmarkWorker::class] = function($c) {
-            return new BenchmarkWorker($c[Instance::class]);
+        // Messages
+        $container[RabbitMessage::class] = function($c) {
+            return new RabbitMessage('', $c['rabbit_properties']);
         };
 
         // Publishers
         $container[BenchmarkPublisher::class] = function($c) {
-            return new BenchmarkPublisher($c[Instance::class]);
+            return new BenchmarkPublisher($c[ChannelFactory::class], $c[RabbitMessage::class]);
+        };
+
+        // Properties
+        $container['rabbit_properties'] = function() {
+            return ['message_id' => time()];
+        };
+
+        // Workers
+        $container[BenchmarkWorker::class] = function($c) {
+            return new BenchmarkWorker($c[ChannelFactory::class]);
         };
 
 
@@ -43,6 +58,12 @@ class RabbitDi
      */
     public static function get($class_name)
     {
-        return self::getContainer()[$class_name];
+        try {
+            $class = self::getContainer()[$class_name];
+        } catch (\InvalidArgumentException $e) {
+            die(sprintf('Class %s was not found in the container.', $class_name));
+        }
+
+        return $class;
     }
 }
