@@ -34,16 +34,33 @@ class LSCommand extends Command
         $logger->info('execute');
         $logger->error('error');
 
+        $this->publishJob();
+    }
+
+    protected function publishJob()
+    {
         // Get the Channel object
         $channel = $this->connection_instance->channel();
 
-        // Declare queue if it doesn't exist
-        $channel->queue_declare('exec_queue', false, false, false, false);
+        //Declare queue if it doesn't exist
+        $this->declareQueue($channel);
 
         // Get the Message object and publish job
         $message = new AMQPMessage('for i in `seq 1 100`; do echo $i^6 | bc; done');
         $channel->basic_publish($message, '', 'exec_queue');
-        $channel->close();
+
+        // Close connections
+        $this->closeConnections($channel);
+    }
+
+    protected function declareQueue($channel)
+    {
+        $channel->queue_declare('exec_queue', false, false, false, false);
+    }
+
+    protected function closeConnections($channel)
+    {
         $this->connection_instance->close();
+        $channel->close();
     }
 }
