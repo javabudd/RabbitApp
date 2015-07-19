@@ -22,6 +22,7 @@ abstract class AbstractWorker
     {
         /** @var \PhpAmqpLib\Channel\AMQPChannel $channel */
         $channel      = $this->getChannel();
+        $this->declareQueue($channel);
         $consumer_tag = $this->consume($channel);
         echo 'Worker Tag: ' . $consumer_tag . PHP_EOL;
         while (count($channel->callbacks)) {
