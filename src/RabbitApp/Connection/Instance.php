@@ -3,6 +3,7 @@
 namespace RabbitApp\Connection;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Exception\AMQPRuntimeException;
 
 class Instance extends AMQPStreamConnection
 {
@@ -13,7 +14,11 @@ class Instance extends AMQPStreamConnection
     {
         $config = $this->getConfig();
 
-        parent::__construct($config['url'], $config['port'], $config['rabbitmquser'], $config['rabbitmqpass']);
+        try {
+            parent::__construct($config['url'], $config['port'], $config['rabbitmquser'], $config['rabbitmqpass']);
+        } catch (AMQPRuntimeException $exception) {
+            echo $exception->getMessage();
+        }
     }
 
     /**
@@ -22,7 +27,7 @@ class Instance extends AMQPStreamConnection
      */
     protected function getConfig()
     {
-        $config = parse_ini_file(BASE_PATH . '/config.ini');
+        $config = parse_ini_file(BASE_PATH . '/config/config.ini');
         if (false === $config) {
             throw new \Exception('Unable to parse or find config file');
         }

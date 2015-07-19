@@ -48,9 +48,8 @@ class BenchmarkWorker implements WorkerInterface
     {
         /** @var \PhpAmqpLib\Message\AMQPMessage $args */
         return function($args) {
-            exec($args->body, $out);
-            var_dump($out);
-            echo(PHP_EOL . 'Job finished!');
+            exec($args->body);
+            echo($args->get('message_id') . PHP_EOL . 'Job finished!' . PHP_);
         };
     }
 

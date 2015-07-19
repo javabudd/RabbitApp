@@ -3,20 +3,21 @@
 namespace RabbitApp\Command;
 
 use CLIFramework\Command;
-use RabbitApp\Connection\Instance;
 use RabbitApp\Worker\BenchmarkWorker;
 
 class BenchmarkWorkerCommand extends Command
 {
+    /**
+     * @Inject
+     *
+     * @var BenchmarkWorker
+     */
+    protected $benchmark_worker;
+
     public function execute()
     {
-        // Create connection instance
-        $connection_instance = new Instance();
-
         // Create a worker and run
-        $worker = new BenchmarkWorker($connection_instance);
-        $worker->run();
-
-        $this->logger->info('Worker started');
+        $this->logger->info('Worker thread started. Stop the worker with CTRL+C');
+        $this->benchmark_worker->run();
     }
 }

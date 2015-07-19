@@ -28,7 +28,10 @@ class BenchmarkCommand extends Command
         $this->declareQueue($channel);
 
         // Get the Message object and publish job
-        $message = new AMQPMessage('for i in `seq 1 100`; do echo $i^6 | bc; done');
+        $min     = 10000000000000000000;
+        $max     = 20000000000000000000;
+        $message =
+            new AMQPMessage('for i in `seq 1 100`; do echo $i^6 | bc; done', ['message_id' => mt_rand($min, $max)]);
         $channel->basic_publish($message, '', 'exec_queue');
 
         // Close connections
