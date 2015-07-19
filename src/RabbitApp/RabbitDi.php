@@ -35,21 +35,14 @@ class RabbitDi
         return $container;
     }
 
-    // Callable Workers
     /**
-     * @return BenchmarkWorker
+     * Method for retrieving a class from the container based on class name.
+     *
+     * @param $class_name
+     * @return mixed
      */
-    public static function getBenchmarkWorker()
+    public static function get($class_name)
     {
-        return self::getContainer()[BenchmarkWorker::class];
-    }
-
-    // Callable Publishers
-    /**
-     * @return BenchmarkPublisher
-     */
-    public static function getBenchmarkPublisher()
-    {
-        return self::getContainer()[BenchmarkPublisher::class];
+        return self::getContainer()[$class_name];
     }
 }
