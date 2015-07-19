@@ -3,6 +3,7 @@
 namespace RabbitApp\Worker;
 
 use RabbitApp\Connection\Instance;
+use PhpAmqpLib\Channel\AMQPChannel;
 
 class BenchmarkWorker implements WorkerInterface
 {
@@ -30,23 +31,28 @@ class BenchmarkWorker implements WorkerInterface
     }
 
     /**
-     * @param $channel
+     * @TODO change this from exec()
+     *
+     * @param AMQPChannel $channel
      */
-    public function consume($channel)
+    public function consume(AMQPChannel $channel)
     {
         $channel->basic_consume('exec_queue', '', false, true, false, false, $this->callback());
     }
 
     /**
-     * @return string
+     * @return callable
      */
     public function callback()
     {
-        return 'callback';
+        /** @var \PhpAmqpLib\Message\AMQPMessage $args */
+        return function($args) {
+            echo $args->body;
+        };
     }
 
     /**
-     * @return \PhpAmqpLib\Channel\AMQPChannel
+     * @return AMQPChannel
      */
     public function getChannel()
     {

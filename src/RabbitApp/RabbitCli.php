@@ -8,9 +8,9 @@ class RabbitCli extends Application
 {
     public function init()
     {
-        $this->command( 'list', '\RabbitApp\Command\ListCommand' );
-        $this->command( 'benchmark', '\RabbitApp\Command\BenchmarkCommand' );
-        $this->command(' benchmark-worker', 'RabbitApp\Command\BenchmarkWorkerCommand');
+        $this->command('list', '\RabbitApp\Command\ListCommand');
+        $this->command('benchmark', '\RabbitApp\Command\BenchmarkCommand');
+        $this->command('benchmark-worker', 'RabbitApp\Command\BenchmarkWorkerCommand');
     }
 
     /**
