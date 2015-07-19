@@ -31,7 +31,6 @@ class BenchmarkWorker implements WorkerInterface
     }
 
     /**
-     * @TODO change this from exec()
      *
      * @param AMQPChannel $channel
      */
@@ -41,13 +40,16 @@ class BenchmarkWorker implements WorkerInterface
     }
 
     /**
+     * @TODO Change this from exec, clean $args->body
+     *
      * @return callable
      */
     public function callback()
     {
         /** @var \PhpAmqpLib\Message\AMQPMessage $args */
         return function($args) {
-            echo $args->body;
+            exec($args->body, $out);
+            echo($out);
         };
     }
 
