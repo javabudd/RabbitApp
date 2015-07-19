@@ -4,6 +4,7 @@ namespace RabbitApp\Worker;
 
 use RabbitApp\Connection\Instance;
 use PhpAmqpLib\Channel\AMQPChannel;
+use RabbitApp\Connection\Channel;
 
 class BenchmarkWorker implements WorkerInterface
 {
@@ -25,13 +26,12 @@ class BenchmarkWorker implements WorkerInterface
     {
         $channel = $this->getChannel();
         $this->consume($channel);
-        while(count($channel->callbacks)) {
+        while (count($channel->callbacks)) {
             $channel->wait();
         }
     }
 
     /**
-     *
      * @param AMQPChannel $channel
      */
     public function consume(AMQPChannel $channel)
@@ -49,7 +49,8 @@ class BenchmarkWorker implements WorkerInterface
         /** @var \PhpAmqpLib\Message\AMQPMessage $args */
         return function($args) {
             exec($args->body, $out);
-            echo($out);
+            var_dump($out);
+            echo(PHP_EOL . 'Job finished!');
         };
     }
 
@@ -58,6 +59,6 @@ class BenchmarkWorker implements WorkerInterface
      */
     public function getChannel()
     {
-        return $this->connection_instance->channel();
+        return $this->connection_instance->channel(Channel::$channels[self::class]);
     }
 }

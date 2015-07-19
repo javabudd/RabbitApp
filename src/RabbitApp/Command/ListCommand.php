@@ -8,6 +8,6 @@ class ListCommand extends Command
 {
     public function execute()
     {
-        $this->logger->info('Available jobs to run: benchmark');
+        $this->logger->info('Available jobs to run: benchmark, benchmark-worker');
     }
 }

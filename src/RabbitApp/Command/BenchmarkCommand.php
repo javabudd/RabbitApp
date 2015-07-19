@@ -5,6 +5,7 @@ namespace RabbitApp\Command;
 use CLIFramework\Command;
 use PhpAmqpLib\Message\AMQPMessage;
 use RabbitApp\Connection\Instance;
+use RabbitApp\Connection\Channel;
 
 class BenchmarkCommand extends Command
 {
@@ -17,9 +18,11 @@ class BenchmarkCommand extends Command
 
     protected function publishJob()
     {
+        // Create connection instance
         $connection_instance = new Instance();
+
         // Get the Channel object
-        $channel = $connection_instance->channel();
+        $channel = $connection_instance->channel(Channel::$channels[self::class]);
 
         //Declare queue if it doesn't exist
         $this->declareQueue($channel);
