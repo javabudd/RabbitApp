@@ -5,12 +5,14 @@ require_once __DIR__ . '/vendor/autoload.php';
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-$connection = new AMQPConnection('oddjob.kush.dev', 5672, 'mqadmin', 'mqadmin');
+$config = parse_ini_file('config.ini');
+
+$connection = new AMQPConnection($config['url'], $config['port'], $config['rabbitmquser'], $config['rabbitmqpass']);
 $channel = $connection->channel();
 
 $channel->queue_declare('exec_queue', false, false, false, false);
 
-$msg = new AMQPMessage('ls -la');
+$msg = new AMQPMessage('for i in `seq 1 100`; do echo $i^6 | bc; done');
 $channel->basic_publish($msg, '', 'exec_queue');
 
 $channel->close();
