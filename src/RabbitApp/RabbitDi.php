@@ -12,7 +12,7 @@ class RabbitDi
     /**
      * @return Container
      */
-    public static function getContainer()
+    protected function getContainer()
     {
         $container = new Container();
 
@@ -21,17 +21,35 @@ class RabbitDi
             return new Instance();
         };
 
-        // Worker
+        // Workers
         $container[BenchmarkWorker::class] = function($c) {
             return new BenchmarkWorker($c[Instance::class]);
         };
 
-        // Publisher
+        // Publishers
         $container[BenchmarkPublisher::class] = function($c) {
             return new BenchmarkPublisher($c[Instance::class]);
         };
 
 
         return $container;
+    }
+
+    // Callable Workers
+    /**
+     * @return BenchmarkWorker
+     */
+    public static function getBenchmarkWorker()
+    {
+        return self::getContainer()[BenchmarkWorker::class];
+    }
+
+    // Callable Publishers
+    /**
+     * @return BenchmarkPublisher
+     */
+    public static function getBenchmarkPublisher()
+    {
+        return self::getContainer()[BenchmarkPublisher::class];
     }
 }
