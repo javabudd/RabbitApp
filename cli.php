@@ -10,7 +10,16 @@ $builder->useAutowiring(false);
 $builder->addDefinitions(BASE_PATH .'/config/di.config.php');
 
 $container = $builder->build();
-$container->call(function() {
-    $app = new RabbitApp\RabbitCli();
-    $app->run(['cli.php', 'benchmark-worker']);
-});
+$container->call(startRabbitCli($argv));
+
+/**
+ * @param array $argv
+ * @return callable
+ */
+function startRabbitCli(array $argv)
+{
+    return function() use ($argv) {
+        $app = new RabbitApp\RabbitCli();
+        $app->run($argv);
+    };
+}
