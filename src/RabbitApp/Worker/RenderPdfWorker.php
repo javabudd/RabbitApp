@@ -3,32 +3,27 @@
 namespace RabbitApp\Worker;
 
 use PhpAmqpLib\Channel\AMQPChannel;
-use RabbitApp\Publisher\BenchmarkPublisher;
+use RabbitApp\Publisher\RenderPdfPublisher;
 
-class BenchmarkWorker extends AbstractWorker
+class RenderPdfWorker extends AbstractWorker
 {
     /**
      * @param AMQPChannel $channel
-     * @return mixed
+     * @return mixed|string
      */
     public function consume(AMQPChannel $channel)
     {
         return $channel->basic_consume(
-            BenchmarkPublisher::BENCHMARK_QUEUE, '', false, true, false, false, $this->callback()
+            RenderPdfPublisher::RENDER_PDF_QUEUE, '', false, true, false, false, $this->callback()
         );
     }
 
-    /**
-     * @TODO Change this from exec, clean $args->body
-     *
-     * @return callable
-     */
     public function callback()
     {
         /** @var \PhpAmqpLib\Message\AMQPMessage $args */
         return function($args) {
-            exec($args->body);
-            echo(date('Y/m/d H:i:s') . ": Job #{$args->get('message_id')} finished!" . PHP_EOL);
+            $profile_info = implode(',', json_decode($args->body, true));
+            echo(date('Y/m/d H:i:s') . ": Profile info: {$profile_info}" . PHP_EOL);
         };
     }
 
@@ -37,7 +32,7 @@ class BenchmarkWorker extends AbstractWorker
      */
     public function declareQueue(AMQPChannel $channel)
     {
-        $channel->queue_declare(BenchmarkPublisher::BENCHMARK_QUEUE, false, false, false, false);
+        $channel->queue_declare(RenderPdfPublisher::RENDER_PDF_QUEUE, false, false, false, false);
     }
 
     /**

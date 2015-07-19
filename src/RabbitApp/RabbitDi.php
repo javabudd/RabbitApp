@@ -7,12 +7,15 @@ use RabbitApp\Connection\Factory\ChannelFactory;
 use RabbitApp\Connection\InstanceConnection;
 use RabbitApp\Message\RabbitMessage;
 use RabbitApp\Publisher\BenchmarkPublisher;
+use RabbitApp\Publisher\RenderPdfPublisher;
 use RabbitApp\Worker\BenchmarkWorker;
+use RabbitApp\Worker\RenderPdfWorker;
 
 class RabbitDi
 {
     /**
      * @return Container
+     * @throws \Exception
      */
     protected function getContainer()
     {
@@ -35,6 +38,9 @@ class RabbitDi
         $container[BenchmarkPublisher::class] = function($c) {
             return new BenchmarkPublisher($c[ChannelFactory::class], $c[RabbitMessage::class]);
         };
+        $container[RenderPdfPublisher::class] = function($c) {
+            return new RenderPdfPublisher($c[ChannelFactory::class], $c[RabbitMessage::class]);
+        };
 
         // Properties
         $container['rabbit_properties'] = function() {
@@ -44,6 +50,9 @@ class RabbitDi
         // Workers
         $container[BenchmarkWorker::class] = function($c) {
             return new BenchmarkWorker($c[ChannelFactory::class]);
+        };
+        $container[RenderPdfWorker::class] = function($c) {
+            return new RenderPdfWorker($c[ChannelFactory::class]);
         };
 
 
@@ -55,6 +64,7 @@ class RabbitDi
      *
      * @param $class_name
      * @return mixed
+     * @throws \Exception
      */
     public static function get($class_name)
     {

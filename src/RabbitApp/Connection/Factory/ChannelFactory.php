@@ -5,6 +5,8 @@ namespace RabbitApp\Connection\Factory;
 use RabbitApp\Publisher\BenchmarkPublisher;
 use RabbitApp\Worker\BenchmarkWorker;
 use RabbitApp\Connection\InstanceConnection;
+use RabbitApp\Publisher\RenderPdfPublisher;
+use RabbitApp\Worker\RenderPdfWorker;
 
 class ChannelFactory
 {
@@ -15,7 +17,9 @@ class ChannelFactory
      */
     public static $channels = [
         BenchmarkPublisher::class => 1,
-        BenchmarkWorker::class    => 1
+        BenchmarkWorker::class    => 1,
+        RenderPdfPublisher::class => 2,
+        RenderPdfWorker::class    => 2
     ];
 
     /** @var InstanceConnection */
@@ -37,10 +41,7 @@ class ChannelFactory
     public function getChannelByClassName($class_name)
     {
         if (array_key_exists($class_name, self::$channels)) {
-            // Get the channel
             $channel = $this->connection_instance->channel(self::$channels[$class_name]);
-            // Declare the queue
-            $channel->queue_declare('exec_queue', false, false, false, false);
         } else {
             throw new \Exception(sprintf('Channel key %s not found in channels array', $class_name));
         }

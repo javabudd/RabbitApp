@@ -4,10 +4,10 @@ namespace RabbitApp\Publisher;
 
 use PhpAmqpLib\Channel\AMQPChannel;
 
-class BenchmarkPublisher extends AbstractPublisher
+class RenderPdfPublisher extends AbstractPublisher
 {
-    const BENCHMARK_QUEUE = 'benchmark_queue';
-    
+    const RENDER_PDF_QUEUE = 'render_pdf_queue';
+
     /**
      * @param $body
      * @param array $opts
@@ -18,12 +18,12 @@ class BenchmarkPublisher extends AbstractPublisher
         // Get the channel
         $channel = $this->getChannel();
 
-        // Declare the queue
+        // Declare queue
         $this->declareQueue($channel);
 
         // Publish the job
         $channel->basic_publish(
-            $this->message->setBody($body), '', self::BENCHMARK_QUEUE
+            $this->message->setBody(json_encode($body)), '', self::RENDER_PDF_QUEUE
         );
 
         // Close the connection
@@ -44,7 +44,7 @@ class BenchmarkPublisher extends AbstractPublisher
      */
     public function declareQueue(AMQPChannel $channel)
     {
-        $channel->queue_declare(self::BENCHMARK_QUEUE, false, false, false, false);
+        $channel->queue_declare(self::RENDER_PDF_QUEUE, false, false, false, false);
     }
 
     /**
@@ -55,4 +55,3 @@ class BenchmarkPublisher extends AbstractPublisher
         $channel->close();
     }
 }
-
