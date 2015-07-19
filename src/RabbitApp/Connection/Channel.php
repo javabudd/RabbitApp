@@ -2,13 +2,13 @@
 
 namespace RabbitApp\Connection;
 
-use RabbitApp\Command\BenchmarkCommand;
+use RabbitApp\Publisher\BenchmarkPublisher;
 use RabbitApp\Worker\BenchmarkWorker;
 
 class Channel
 {
     public static $channels = [
-        BenchmarkCommand::class => 1,
+        BenchmarkPublisher::class => 1,
         BenchmarkWorker::class  => 1
     ];
 }

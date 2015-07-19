@@ -21,6 +21,11 @@ class Instance extends AMQPStreamConnection
         }
     }
 
+    public function __destruct()
+    {
+        $this->close();
+    }
+
     /**
      * @return array
      * @throws \Exception

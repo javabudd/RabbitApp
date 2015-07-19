@@ -3,21 +3,22 @@
 namespace RabbitApp\Command;
 
 use CLIFramework\Command;
+use PhpAmqpLib\Exception\AMQPRuntimeException;
+use RabbitApp\RabbitDi;
 use RabbitApp\Worker\BenchmarkWorker;
 
 class BenchmarkWorkerCommand extends Command
 {
-    /**
-     * @Inject
-     *
-     * @var BenchmarkWorker
-     */
-    protected $benchmark_worker;
-
     public function execute()
     {
-        // Create a worker and run
-        $this->logger->info('Worker thread started. Stop the worker with CTRL+C');
-        $this->benchmark_worker->run();
+        try {
+            $container = RabbitDi::getContainer();
+            /** @var BenchmarkWorker $benchmark_worker */
+            $benchmark_worker = $container[BenchmarkWorker::class];
+            $this->logger->info('Worker thread started. Stop the worker with CTRL+C');
+            $benchmark_worker->run();
+        } catch (AMQPRuntimeException $e) {
+            $this->logger->error('Unable to start the worker.');
+        }
     }
 }

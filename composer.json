@@ -1,8 +1,6 @@
 {
   "require": {
     "corneltek/cliframework": "*",
-    "php-di/php-di": "^5.0",
-    "doctrine/annotations": "~1.2",
     "videlalvaro/php-amqplib": "v2.1.0"
   },
   "autoload": {
