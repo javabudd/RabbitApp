@@ -4,7 +4,7 @@ namespace RabbitApp\Worker;
 
 use RabbitApp\Connection\Instance;
 
-class LSWorker implements WorkerInterface
+class BenchmarkWorker implements WorkerInterface
 {
     /** @var Instance */
     protected $connection_instance;
