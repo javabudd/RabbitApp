@@ -4,7 +4,7 @@ namespace RabbitApp\Command;
 
 use CLIFramework\Command;
 use RabbitApp\RabbitDi;
-use RabbitApp\Publisher\Publisher;
+use RabbitApp\Publisher\JobPublisher;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 
 /**
@@ -16,8 +16,8 @@ class BenchmarkCommand extends Command
     public function execute()
     {
         try {
-            /** @var Publisher $publisher */
-            $publisher = RabbitDi::get(Publisher::class);
+            /** @var JobPublisher $publisher */
+            $publisher = RabbitDi::get(JobPublisher::class);
             $publisher->setQueueName('benchmark_queue');
             $publisher->publish(['for i in `seq 1 100`; do echo $i^6 | bc; done']);
             $this->logger->info('Job published successfully!');

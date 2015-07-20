@@ -4,7 +4,7 @@ namespace RabbitApp\Command;
 
 use CLIFramework\Command;
 use RabbitApp\RabbitDi;
-use RabbitApp\Publisher\Publisher;
+use RabbitApp\Publisher\JobPublisher;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 
 /**
@@ -32,8 +32,8 @@ class RenderPdfCommand extends Command
     public function execute($profile_id, $profile_type)
     {
         try {
-            /** @var Publisher $publisher */
-            $publisher = RabbitDi::get(Publisher::class);
+            /** @var JobPublisher $publisher */
+            $publisher = RabbitDi::get(JobPublisher::class);
             $publisher->setQueueName('render_pdf_queue');
             $publisher->publish(['profile_id' => $profile_id, 'profile_type' => $profile_type]);
             $this->logger->info('Job published successfully!');

@@ -3,9 +3,9 @@
 namespace RabbitApp;
 
 use Pimple\Container;
-use RabbitApp\Connection\InstanceConnection;
+use RabbitApp\Connection\RabbitConnection;
 use RabbitApp\Message\RabbitMessage;
-use RabbitApp\Publisher\Publisher;
+use RabbitApp\Publisher\JobPublisher;
 use RabbitApp\Worker\BenchmarkWorker;
 use RabbitApp\Worker\LendingClubWorker;
 use RabbitApp\Worker\RenderPdfWorker;
@@ -25,8 +25,8 @@ class RabbitDi
         $container = new Container();
 
         // Connection
-        $container[InstanceConnection::class] = function() {
-            return new InstanceConnection();
+        $container[RabbitConnection::class] = function() {
+            return new RabbitConnection();
         };
 
         // Message
@@ -35,8 +35,8 @@ class RabbitDi
         };
 
         // Publisher
-        $container[Publisher::class] = function($c) {
-            return new Publisher($c[InstanceConnection::class], $c[RabbitMessage::class]);
+        $container[JobPublisher::class] = function($c) {
+            return new JobPublisher($c[RabbitConnection::class], $c[RabbitMessage::class]);
         };
 
         // Properties
@@ -46,13 +46,13 @@ class RabbitDi
 
         // Workers
         $container[BenchmarkWorker::class] = function($c) {
-            return new BenchmarkWorker($c[InstanceConnection::class]);
+            return new BenchmarkWorker($c[RabbitConnection::class]);
         };
         $container[RenderPdfWorker::class] = function($c) {
-            return new RenderPdfWorker($c[InstanceConnection::class]);
+            return new RenderPdfWorker($c[RabbitConnection::class]);
         };
         $container[LendingClubWorker::class] = function($c) {
-            return new LendingClubWorker($c[InstanceConnection::class]);
+            return new LendingClubWorker($c[RabbitConnection::class]);
         };
 
 

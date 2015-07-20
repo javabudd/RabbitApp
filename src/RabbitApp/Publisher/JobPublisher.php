@@ -2,18 +2,18 @@
 
 namespace RabbitApp\Publisher;
 
-use RabbitApp\Connection\InstanceConnection;
+use RabbitApp\Connection\RabbitConnection;
 use RabbitApp\Message\RabbitMessage;
 use PhpAmqpLib\Channel\AMQPChannel;
 
 /**
- * Class Publisher
+ * Class JobPublisher
  * @package RabbitApp\Publisher
  */
-class Publisher
+class JobPublisher
 {
-    /** @var InstanceConnection */
-    protected $instance_connection;
+    /** @var RabbitConnection */
+    protected $rabbit_connection;
 
     /** @var RabbitMessage */
     protected $message;
@@ -25,13 +25,13 @@ class Publisher
     protected $channel_id;
 
     /**
-     * @param InstanceConnection $instance_connection
+     * @param RabbitConnection $rabbit_connection
      * @param RabbitMessage $message
      */
-    public function __construct(InstanceConnection $instance_connection, RabbitMessage $message)
+    public function __construct(RabbitConnection $rabbit_connection, RabbitMessage $message)
     {
-        $this->instance_connection = $instance_connection;
-        $this->message             = $message;
+        $this->rabbit_connection = $rabbit_connection;
+        $this->message           = $message;
     }
 
     /**
@@ -77,7 +77,7 @@ class Publisher
      */
     public function getChannel()
     {
-        return $this->instance_connection->channel($this->channel_id);
+        return $this->rabbit_connection->channel($this->channel_id);
     }
 
     /**

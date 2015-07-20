@@ -3,7 +3,7 @@
 namespace RabbitApp\Worker;
 
 use PhpAmqpLib\Channel\AMQPChannel;
-use RabbitApp\Connection\InstanceConnection;
+use RabbitApp\Connection\RabbitConnection;
 
 /**
  * Class AbstractWorker
@@ -11,8 +11,8 @@ use RabbitApp\Connection\InstanceConnection;
  */
 abstract class AbstractWorker
 {
-    /** @var InstanceConnection */
-    protected $instance_connection;
+    /** @var RabbitConnection */
+    protected $rabbit_connection;
 
     /** @var string */
     protected $queue_name = 'default_queue';
@@ -21,11 +21,11 @@ abstract class AbstractWorker
     protected $channel_id;
 
     /**
-     * @param InstanceConnection $instance_connection
+     * @param RabbitConnection $rabbit_connection
      */
-    public function __construct(InstanceConnection $instance_connection)
+    public function __construct(RabbitConnection $rabbit_connection)
     {
-        $this->instance_connection = $instance_connection;
+        $this->rabbit_connection = $rabbit_connection;
     }
 
     /**
@@ -50,7 +50,7 @@ abstract class AbstractWorker
      */
     public function getChannel()
     {
-        return $this->instance_connection->channel($this->channel_id);
+        return $this->rabbit_connection->channel($this->channel_id);
     }
 
     /**
