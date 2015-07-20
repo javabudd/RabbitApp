@@ -3,7 +3,7 @@
 namespace RabbitApp\Worker;
 
 use PhpAmqpLib\Channel\AMQPChannel;
-use RabbitApp\Connection\Factory\ChannelFactory;
+use RabbitApp\Connection\InstanceConnection;
 
 /**
  * Class AbstractWorker
@@ -11,16 +11,27 @@ use RabbitApp\Connection\Factory\ChannelFactory;
  */
 abstract class AbstractWorker
 {
-    /** @var ChannelFactory */
-    protected $channel_factory;
+    /** @var InstanceConnection */
+    protected $instance_connection;
+
+    /** @var string */
+    protected $queue_name = 'default_queue';
+
+    /** @var null|int */
+    protected $channel_id;
 
     /**
-     * @param ChannelFactory $channel_factory
+     * @param InstanceConnection $instance_connection
      */
-    public function __construct(ChannelFactory $channel_factory)
+    public function __construct(InstanceConnection $instance_connection)
     {
-        $this->channel_factory = $channel_factory;
+        $this->instance_connection = $instance_connection;
     }
+
+    /**
+     * @return callable
+     */
+    abstract public function callback();
 
     public function run()
     {
@@ -34,11 +45,52 @@ abstract class AbstractWorker
         }
     }
 
-    abstract public function consume(AMQPChannel $channel);
+    /**
+     * @return AMQPChannel
+     */
+    public function getChannel()
+    {
+        return $this->instance_connection->channel($this->channel_id);
+    }
 
-    abstract public function callback();
+    /**
+     * @param AMQPChannel $channel
+     */
+    public function declareQueue(AMQPChannel $channel)
+    {
+        $channel->queue_declare($this->queue_name, false, false, false, false);
+    }
 
-    abstract public function getChannel();
+    /**
+     * @param AMQPChannel $channel
+     * @return mixed
+     */
+    public function consume(AMQPChannel $channel)
+    {
+        return $channel->basic_consume(
+            $this->queue_name, '', false, true, false, false, $this->callback()
+        );
+    }
 
-    abstract public function declareQueue(AMQPChannel $channel);
+    /**
+     * @param $channel_id
+     * @return $this
+     */
+    public function setChannelId($channel_id)
+    {
+        $this->channel_id = (int)$channel_id;
+
+        return $this;
+    }
+
+    /**
+     * @param $queue_name
+     * @return $this
+     */
+    public function setQueueName($queue_name)
+    {
+        $this->queue_name = (string)$queue_name;
+
+        return $this;
+    }
 }

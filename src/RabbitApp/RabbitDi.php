@@ -3,12 +3,9 @@
 namespace RabbitApp;
 
 use Pimple\Container;
-use RabbitApp\Connection\Factory\ChannelFactory;
 use RabbitApp\Connection\InstanceConnection;
 use RabbitApp\Message\RabbitMessage;
-use RabbitApp\Publisher\BenchmarkPublisher;
-use RabbitApp\Publisher\LendingClubPublisher;
-use RabbitApp\Publisher\RenderPdfPublisher;
+use RabbitApp\Publisher\Publisher;
 use RabbitApp\Worker\BenchmarkWorker;
 use RabbitApp\Worker\LendingClubWorker;
 use RabbitApp\Worker\RenderPdfWorker;
@@ -27,28 +24,19 @@ class RabbitDi
     {
         $container = new Container();
 
-        // Connections
+        // Connection
         $container[InstanceConnection::class] = function() {
             return new InstanceConnection();
         };
-        $container[ChannelFactory::class] = function($c) {
-            return new ChannelFactory($c[InstanceConnection::class]);
-        };
 
-        // Messages
+        // Message
         $container[RabbitMessage::class] = function($c) {
             return new RabbitMessage('', $c['rabbit_properties']);
         };
 
-        // Publishers
-        $container[BenchmarkPublisher::class] = function($c) {
-            return new BenchmarkPublisher($c[ChannelFactory::class], $c[RabbitMessage::class]);
-        };
-        $container[RenderPdfPublisher::class] = function($c) {
-            return new RenderPdfPublisher($c[ChannelFactory::class], $c[RabbitMessage::class]);
-        };
-        $container[LendingClubPublisher::class] = function($c) {
-            return new LendingClubPublisher($c[ChannelFactory::class], $c[RabbitMessage::class]);
+        // Publisher
+        $container[Publisher::class] = function($c) {
+            return new Publisher($c[InstanceConnection::class], $c[RabbitMessage::class]);
         };
 
         // Properties
@@ -58,13 +46,13 @@ class RabbitDi
 
         // Workers
         $container[BenchmarkWorker::class] = function($c) {
-            return new BenchmarkWorker($c[ChannelFactory::class]);
+            return new BenchmarkWorker($c[InstanceConnection::class]);
         };
         $container[RenderPdfWorker::class] = function($c) {
-            return new RenderPdfWorker($c[ChannelFactory::class]);
+            return new RenderPdfWorker($c[InstanceConnection::class]);
         };
         $container[LendingClubWorker::class] = function($c) {
-            return new LendingClubWorker($c[ChannelFactory::class]);
+            return new LendingClubWorker($c[InstanceConnection::class]);
         };
 
 

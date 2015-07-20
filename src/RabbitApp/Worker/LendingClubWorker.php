@@ -3,8 +3,6 @@
 namespace RabbitApp\Worker;
 
 use Httpful\Request;
-use PhpAmqpLib\Channel\AMQPChannel;
-use RabbitApp\Publisher\LendingClubPublisher;
 
 /**
  * Class LendingClubWorker
@@ -12,27 +10,6 @@ use RabbitApp\Publisher\LendingClubPublisher;
  */
 class LendingClubWorker extends AbstractWorker
 {
-    /**
-     * @param AMQPChannel $channel
-     * @return mixed|string
-     * @throws \Httpful\Exception\ConnectionErrorException
-     */
-    public function consume(AMQPChannel $channel)
-    {
-        return $channel->basic_consume(
-            LendingClubPublisher::LENDING_CLUB_QUEUE, '', false, true, false, false, $this->callback()
-        );
-    }
-
-    /**
-     * @return null|AMQPChannel
-     * @throws \Exception
-     */
-    public function getChannel()
-    {
-        return $this->channel_factory->getChannelByClassName(self::class);
-    }
-
     /**
      * Call LendingClub and gather all loans
      *
@@ -44,23 +21,16 @@ class LendingClubWorker extends AbstractWorker
         $uri = 'https://api.lendingclub.com/api/investor/1/loans/listing';
         /** @var \PhpAmqpLib\Message\AMQPMessage $args */
         return function($args) use($uri) {
-            $request = Request::init('GET');
+            $request  = Request::init('GET');
+            $auth_key = json_decode($args->body)[0];
             $request->uri($uri);
             $request->addHeader('Accept', 'application/json');
             $request->addHeader('Content-Type', 'application/json');
-            $request->addHeader('Authorization', $args->body);
+            $request->addHeader('Authorization', $auth_key);
             /** @var \Httpful\Response $response */
             $response = $request->send();
-
+            echo $response->code . PHP_EOL;
             // Perform DB operation with response
         };
-    }
-
-    /**
-     * @param AMQPChannel $channel
-     */
-    public function declareQueue(AMQPChannel $channel)
-    {
-        $channel->queue_declare(LendingClubPublisher::LENDING_CLUB_QUEUE, false, false, false, false);
     }
 }

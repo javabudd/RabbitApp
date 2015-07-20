@@ -18,6 +18,7 @@ class RenderPdfWorkerCommand extends Command
         try {
             /** @var RenderPdfWorker $render_pdf_worker */
             $render_pdf_worker = RabbitDi::get(RenderPdfWorker::class);
+            $render_pdf_worker->setQueueName('render_pdf_queue');
             $this->logger->info('Render PDF worker thread started. Stop the worker with CTRL+C');
             $render_pdf_worker->run();
         } catch (AMQPRuntimeException $e) {

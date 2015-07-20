@@ -18,6 +18,7 @@ class BenchmarkWorkerCommand extends Command
         try {
             /** @var BenchmarkWorker $benchmark_worker */
             $benchmark_worker = RabbitDi::get(BenchmarkWorker::class);
+            $benchmark_worker->setQueueName('benchmark_queue');
             $this->logger->info('Benchmark worker thread started. Stop the worker with CTRL+C');
             $benchmark_worker->run();
         } catch (AMQPRuntimeException $e) {
