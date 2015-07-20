@@ -4,6 +4,10 @@ namespace RabbitApp\Publisher;
 
 use PhpAmqpLib\Channel\AMQPChannel;
 
+/**
+ * Class BenchmarkPublisher
+ * @package RabbitApp\Publisher
+ */
 class BenchmarkPublisher extends AbstractPublisher
 {
     const BENCHMARK_QUEUE = 'benchmark_queue';

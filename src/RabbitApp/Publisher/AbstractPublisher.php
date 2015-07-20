@@ -6,6 +6,10 @@ use RabbitApp\Connection\Factory\ChannelFactory;
 use RabbitApp\Message\RabbitMessage;
 use PhpAmqpLib\Channel\AMQPChannel;
 
+/**
+ * Class AbstractPublisher
+ * @package RabbitApp\Publisher
+ */
 abstract class AbstractPublisher
 {
     /** @var ChannelFactory */

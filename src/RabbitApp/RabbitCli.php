@@ -4,6 +4,10 @@ namespace RabbitApp;
 
 use CLIFramework\Application;
 
+/**
+ * Class RabbitCli
+ * @package RabbitApp
+ */
 class RabbitCli extends Application
 {
     public function init()
@@ -12,14 +16,16 @@ class RabbitCli extends Application
 
         // Commands/Publishers
         $this->commandGroup('Publishers', [
-            'benchmark'  => '\RabbitApp\Command\BenchmarkCommand',
-            'render-pdf' =>  'RabbitApp\Command\RenderPdfCommand'
+            'benchmark'    => 'RabbitApp\Command\BenchmarkCommand',
+            'render-pdf'   => 'RabbitApp\Command\RenderPdfCommand',
+            'lending-club' => 'RabbitApp\Command\LendingClubCommand'
         ]);
 
         // Workers
         $this->commandGroup('Workers', [
-            'benchmark-worker'  => 'RabbitApp\Command\BenchmarkWorkerCommand',
-            'render-pdf-worker' => 'RabbitApp\Command\RenderPdfWorkerCommand'
+            'benchmark-worker'    => 'RabbitApp\Command\BenchmarkWorkerCommand',
+            'render-pdf-worker'   => 'RabbitApp\Command\RenderPdfWorkerCommand',
+            'lending-club-worker' => 'RabbitApp\Command\LendingClubWorkerCommand'
         ]);
     }
 

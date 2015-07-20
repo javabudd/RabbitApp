@@ -5,6 +5,10 @@ namespace RabbitApp\Worker;
 use PhpAmqpLib\Channel\AMQPChannel;
 use RabbitApp\Connection\Factory\ChannelFactory;
 
+/**
+ * Class AbstractWorker
+ * @package RabbitApp\Worker
+ */
 abstract class AbstractWorker
 {
     /** @var ChannelFactory */
@@ -20,8 +24,8 @@ abstract class AbstractWorker
 
     public function run()
     {
-        /** @var \PhpAmqpLib\Channel\AMQPChannel $channel */
-        $channel      = $this->getChannel();
+        /** @var AMQPChannel $channel */
+        $channel = $this->getChannel();
         $this->declareQueue($channel);
         $consumer_tag = $this->consume($channel);
         echo 'Worker Tag: ' . $consumer_tag . PHP_EOL;

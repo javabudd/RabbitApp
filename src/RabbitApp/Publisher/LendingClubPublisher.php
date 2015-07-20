@@ -5,12 +5,12 @@ namespace RabbitApp\Publisher;
 use PhpAmqpLib\Channel\AMQPChannel;
 
 /**
- * Class RenderPdfPublisher
+ * Class LendingClubPublisher
  * @package RabbitApp\Publisher
  */
-class RenderPdfPublisher extends AbstractPublisher
+class LendingClubPublisher extends AbstractPublisher
 {
-    const RENDER_PDF_QUEUE = 'render_pdf_queue';
+    const LENDING_CLUB_QUEUE = 'lending_club_queue';
 
     /**
      * @param $body
@@ -25,17 +25,17 @@ class RenderPdfPublisher extends AbstractPublisher
         // Declare queue
         $this->declareQueue($channel);
 
-        // Publish the job
+        // Publish job
         $channel->basic_publish(
-            $this->message->setBody(json_encode($body)), '', self::RENDER_PDF_QUEUE
+            $this->message->setBody($body), '', self::LENDING_CLUB_QUEUE
         );
 
-        // Close the connection
+        // Close connection
         $this->closeConnection($channel);
     }
 
     /**
-     * @return null|\PhpAmqpLib\Channel\AMQPChannel
+     * @return null|AMQPChannel
      * @throws \Exception
      */
     public function getChannel()
@@ -48,7 +48,7 @@ class RenderPdfPublisher extends AbstractPublisher
      */
     public function declareQueue(AMQPChannel $channel)
     {
-        $channel->queue_declare(self::RENDER_PDF_QUEUE, false, false, false, false);
+        $channel->queue_declare(self::LENDING_CLUB_QUEUE, false, false, false, false);
     }
 
     /**

@@ -5,6 +5,10 @@ namespace RabbitApp\Worker;
 use PhpAmqpLib\Channel\AMQPChannel;
 use RabbitApp\Publisher\BenchmarkPublisher;
 
+/**
+ * Class BenchmarkWorker
+ * @package RabbitApp\Worker
+ */
 class BenchmarkWorker extends AbstractWorker
 {
     /**

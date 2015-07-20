@@ -3,11 +3,19 @@
 namespace RabbitApp\Connection\Factory;
 
 use RabbitApp\Publisher\BenchmarkPublisher;
+use RabbitApp\Publisher\LendingClubPublisher;
 use RabbitApp\Worker\BenchmarkWorker;
+use RabbitApp\Worker\LendingClubWorker;
 use RabbitApp\Connection\InstanceConnection;
 use RabbitApp\Publisher\RenderPdfPublisher;
 use RabbitApp\Worker\RenderPdfWorker;
 
+/**
+ * @TODO Replace static $channels with db call
+ *
+ * Class ChannelFactory
+ * @package RabbitApp\Connection\Factory
+ */
 class ChannelFactory
 {
     /**
@@ -16,10 +24,12 @@ class ChannelFactory
      * @var array
      */
     public static $channels = [
-        BenchmarkPublisher::class => 1,
-        BenchmarkWorker::class    => 1,
-        RenderPdfPublisher::class => 2,
-        RenderPdfWorker::class    => 2
+        BenchmarkPublisher::class   => 1,
+        BenchmarkWorker::class      => 1,
+        RenderPdfPublisher::class   => 2,
+        RenderPdfWorker::class      => 2,
+        LendingClubPublisher::class => 3,
+        LendingClubWorker::class    => 3
     ];
 
     /** @var InstanceConnection */

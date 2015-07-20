@@ -7,6 +7,10 @@ use RabbitApp\RabbitDi;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use RabbitApp\Worker\RenderPdfWorker;
 
+/**
+ * Class RenderPdfWorkerCommand
+ * @package RabbitApp\Command
+ */
 class RenderPdfWorkerCommand extends Command
 {
     public function execute()

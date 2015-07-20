@@ -7,10 +7,16 @@ use RabbitApp\Connection\Factory\ChannelFactory;
 use RabbitApp\Connection\InstanceConnection;
 use RabbitApp\Message\RabbitMessage;
 use RabbitApp\Publisher\BenchmarkPublisher;
+use RabbitApp\Publisher\LendingClubPublisher;
 use RabbitApp\Publisher\RenderPdfPublisher;
 use RabbitApp\Worker\BenchmarkWorker;
+use RabbitApp\Worker\LendingClubWorker;
 use RabbitApp\Worker\RenderPdfWorker;
 
+/**
+ * Class RabbitDi
+ * @package RabbitApp
+ */
 class RabbitDi
 {
     /**
@@ -41,6 +47,9 @@ class RabbitDi
         $container[RenderPdfPublisher::class] = function($c) {
             return new RenderPdfPublisher($c[ChannelFactory::class], $c[RabbitMessage::class]);
         };
+        $container[LendingClubPublisher::class] = function($c) {
+            return new LendingClubPublisher($c[ChannelFactory::class], $c[RabbitMessage::class]);
+        };
 
         // Properties
         $container['rabbit_properties'] = function() {
@@ -53,6 +62,9 @@ class RabbitDi
         };
         $container[RenderPdfWorker::class] = function($c) {
             return new RenderPdfWorker($c[ChannelFactory::class]);
+        };
+        $container[LendingClubWorker::class] = function($c) {
+            return new LendingClubWorker($c[ChannelFactory::class]);
         };
 
 

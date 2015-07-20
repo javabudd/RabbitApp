@@ -7,6 +7,10 @@ use PhpAmqpLib\Exception\AMQPRuntimeException;
 use RabbitApp\RabbitDi;
 use RabbitApp\Worker\BenchmarkWorker;
 
+/**
+ * Class BenchmarkWorkerCommand
+ * @package RabbitApp\Command
+ */
 class BenchmarkWorkerCommand extends Command
 {
     public function execute()

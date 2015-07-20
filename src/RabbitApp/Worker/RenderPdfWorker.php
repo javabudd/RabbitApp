@@ -5,6 +5,10 @@ namespace RabbitApp\Worker;
 use PhpAmqpLib\Channel\AMQPChannel;
 use RabbitApp\Publisher\RenderPdfPublisher;
 
+/**
+ * Class RenderPdfWorker
+ * @package RabbitApp\Worker
+ */
 class RenderPdfWorker extends AbstractWorker
 {
     /**
@@ -18,6 +22,9 @@ class RenderPdfWorker extends AbstractWorker
         );
     }
 
+    /**
+     * @return callable
+     */
     public function callback()
     {
         /** @var \PhpAmqpLib\Message\AMQPMessage $args */
