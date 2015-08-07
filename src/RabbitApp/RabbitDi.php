@@ -2,6 +2,7 @@
 
 namespace RabbitApp;
 
+use CLIFramework\Logger;
 use Pimple\Container;
 use RabbitApp\Connection\RabbitConnection;
 use RabbitApp\Message\RabbitMessage;
@@ -25,8 +26,8 @@ class RabbitDi
         $container = new Container();
 
         // Connection
-        $container[RabbitConnection::class] = function() {
-            return new RabbitConnection();
+        $container[RabbitConnection::class] = function($c) {
+            return new RabbitConnection($c[RabbitMessage::class], $c[Logger::class]);
         };
 
         // Message
@@ -36,12 +37,17 @@ class RabbitDi
 
         // Publisher
         $container[JobPublisher::class] = function($c) {
-            return new JobPublisher($c[RabbitConnection::class], $c[RabbitMessage::class]);
+            return new JobPublisher($c[RabbitConnection::class]);
         };
 
         // Properties
         $container['rabbit_properties'] = function() {
             return ['message_id' => time()];
+        };
+
+        // Logger
+        $container[Logger::class] = function() {
+            return new Logger();
         };
 
         // Workers

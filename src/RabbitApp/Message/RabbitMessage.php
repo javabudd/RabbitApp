@@ -5,7 +5,7 @@ namespace RabbitApp\Message;
 use PhpAmqpLib\Message\AMQPMessage;
 
 /**
- * This class exists because parent AMQPMessage does not contain a setter for the body variable
+ * This class exists because parent AMQPMessage does not contain a setter for the body variable and I think I have OCD
  *
  * Class RabbitMessage
  * @package RabbitApp\Message

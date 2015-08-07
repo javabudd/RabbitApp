@@ -3,7 +3,6 @@
 namespace RabbitApp\Command;
 
 use CLIFramework\Command;
-use PhpAmqpLib\Exception\AMQPRuntimeException;
 use RabbitApp\Publisher\JobPublisher;
 use RabbitApp\RabbitDi;
 
@@ -28,14 +27,9 @@ class LendingClubCommand extends Command
      */
     public function execute($api_key)
     {
-        try {
-            /** @var JobPublisher $publisher */
-            $publisher = RabbitDi::get(JobPublisher::class);
-            $publisher->setQueueName('lending_club_queue');
-            $publisher->publish([$api_key]);
-            $this->logger->info('Job published successfully!');
-        } catch (AMQPRuntimeException $e) {
-            $this->logger->error('Job failed.');
-        }
+        /** @var JobPublisher $publisher */
+        $publisher = RabbitDi::get(JobPublisher::class);
+        $publisher->setQueueName('lending_club_queue');
+        $publisher->publish([$api_key]);
     }
 }

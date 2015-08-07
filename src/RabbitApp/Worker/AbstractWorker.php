@@ -2,14 +2,13 @@
 
 namespace RabbitApp\Worker;
 
-use PhpAmqpLib\Channel\AMQPChannel;
 use RabbitApp\Connection\RabbitConnection;
 
 /**
  * Class AbstractWorker
  * @package RabbitApp\Worker
  */
-abstract class AbstractWorker
+abstract class AbstractWorker implements WorkerInterface
 {
     /** @var RabbitConnection */
     protected $rabbit_connection;
@@ -21,6 +20,11 @@ abstract class AbstractWorker
     protected $channel_id;
 
     /**
+     * @return callable
+     */
+    abstract public function callback();
+
+    /**
      * @param RabbitConnection $rabbit_connection
      */
     public function __construct(RabbitConnection $rabbit_connection)
@@ -28,69 +32,35 @@ abstract class AbstractWorker
         $this->rabbit_connection = $rabbit_connection;
     }
 
-    /**
-     * @return callable
-     */
-    abstract public function callback();
-
     public function run()
     {
-        /** @var AMQPChannel $channel */
-        $channel = $this->getChannel();
-        $this->declareQueue($channel);
-        $consumer_tag = $this->consume($channel);
+        // Declare queue
+        $this->rabbit_connection->declareQueue();
+
+        // Consume the job
+        $consumer_tag = $this->rabbit_connection->basicConsume($this->callback());
+
         echo 'Worker Tag: ' . $consumer_tag . PHP_EOL;
-        while (count($channel->callbacks)) {
-            $channel->wait();
+        while (count($this->rabbit_connection->getChannel()->callbacks)) {
+            $this->rabbit_connection->getChannel()->wait();
         }
     }
 
     /**
-     * @return AMQPChannel
+     * @param $queue_name
+     * @return RabbitConnection
      */
-    public function getChannel()
+    public function setQueueName($queue_name)
     {
-        return $this->rabbit_connection->channel($this->channel_id);
-    }
-
-    /**
-     * @param AMQPChannel $channel
-     */
-    public function declareQueue(AMQPChannel $channel)
-    {
-        $channel->queue_declare($this->queue_name, false, false, false, false);
-    }
-
-    /**
-     * @param AMQPChannel $channel
-     * @return mixed
-     */
-    public function consume(AMQPChannel $channel)
-    {
-        return $channel->basic_consume(
-            $this->queue_name, '', false, true, false, false, $this->callback()
-        );
+        return $this->rabbit_connection->setQueueName($queue_name);
     }
 
     /**
      * @param $channel_id
-     * @return $this
+     * @return RabbitConnection
      */
     public function setChannelId($channel_id)
     {
-        $this->channel_id = (int)$channel_id;
-
-        return $this;
-    }
-
-    /**
-     * @param $queue_name
-     * @return $this
-     */
-    public function setQueueName($queue_name)
-    {
-        $this->queue_name = (string)$queue_name;
-
-        return $this;
+        return $this->rabbit_connection->setChannelId($channel_id);
     }
 }
