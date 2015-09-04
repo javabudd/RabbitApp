@@ -1,12 +1,20 @@
 {
+  "authors": [
+    {
+      "name": "Andy O'Brien",
+      "email": "andy@1bg.com",
+      "homepage": "http://lowend.fm",
+      "role": "Developer"
+    }
+  ],
   "require": {
     "corneltek/cliframework": "*",
     "videlalvaro/php-amqplib": "v2.1.0",
     "nategood/httpful": "*"
   },
   "autoload": {
-    "psr-0": {
-      "RabbitApp": "src/"
+    "psr-4": {
+      "RabbitApp\\": "src/RabbitApp"
     }
   }
 }
